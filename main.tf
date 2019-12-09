@@ -8,6 +8,7 @@ provider "aws" {
 
 
 variable "stack_name" {}
+variable "instance_type" {}
 variable "region" {}
 variable "vpc_id" {}
 variable "subnet_id" {}
@@ -69,7 +70,7 @@ data "aws_iam_policy_document" "DataBrokerIamPolicyDocumentData" {
       "s3:PutObjectTagging"]
 
     resources = [
-      "arn:aws:s3:::*"]
+      "*"]
   }
 }
 
@@ -129,6 +130,24 @@ resource "aws_security_group" "DataBrokerSecurityGroup" {
   }
 }
 
+resource "aws_security_group_rule" "outbound_allow_all" {
+  security_group_id = aws_security_group.DataBrokerSecurityGroup.id
+  type = "egress"
+  from_port = 0
+  to_port = 65535
+  protocol = "all"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "allow_all" {
+  security_group_id = aws_security_group.DataBrokerSecurityGroup.id
+  type = "ingress"
+  from_port = 0
+  to_port = 65535
+  protocol = "all"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
 resource "aws_spot_fleet_request" "DataBrokerSpotFleetRequest" {
   iam_fleet_role = aws_iam_role.DataBrokerSpotFleetIamRole.arn
   target_capacity = 1
@@ -137,6 +156,7 @@ resource "aws_spot_fleet_request" "DataBrokerSpotFleetRequest" {
   launch_specification {
     ami = var.amis[var.region]
     subnet_id = var.subnet_id
+    ebs_optimized = true
 
     ebs_block_device {
       device_name = "/dev/xvda"
@@ -144,7 +164,7 @@ resource "aws_spot_fleet_request" "DataBrokerSpotFleetRequest" {
       volume_size = "10"
     }
 
-    instance_type = "m5.xlarge"
+    instance_type = var.instance_type
     iam_instance_profile_arn = aws_iam_instance_profile.DataBrokerInstanceProfile.arn
 
     key_name = var.key_pair
@@ -152,6 +172,11 @@ resource "aws_spot_fleet_request" "DataBrokerSpotFleetRequest" {
     tags = {
       Name = var.stack_name
     }
+
+    associate_public_ip_address = true
+
+    vpc_security_group_ids = [
+      aws_security_group.DataBrokerSecurityGroup.id]
 
     user_data = file("userdata.sh")
   }

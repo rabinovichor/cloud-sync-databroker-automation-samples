@@ -1,8 +1,8 @@
 #################
 # Vars
 #################
-vpc_id = "" # existing vpc id
-security_group_id = "" # existing security group id
-subnet_id = "" # exisring subnet id
-instance_id = "m5.xlarge" # default instance type
-key_pair = "" # name of you key_pair in aws
+region= "us-east-2" # default region
+vpc_id = "vpc-0f25bd4fad5071038" # default vpc id
+subnet_id = "subnet-00cfe4109218dc115" # default subnet id
+instance_type = "m5.xlarge" # default instance type
+key_pair = "or-test" # default key_pair
