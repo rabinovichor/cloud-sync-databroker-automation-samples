@@ -1,9 +1,8 @@
 # cloud-sync-databroker-automation-samples
 Samples of terraform files for CloudSync Data-Broker
 
-[.lead]
-CloudSync Data-broker:
-Cloud Sync is a software-as-a-service (SaaS) platform that consists of a data broker, a cloud-based portal, and a source and target.
+# CloudSync Data-broker: <h1>
+###### Cloud Sync is a software-as-a-service (SaaS) platform that consists of a data broker, a cloud-based portal, and a source and target. <h6>
 
 The following image shows the relationship between Cloud Sync components:
 
